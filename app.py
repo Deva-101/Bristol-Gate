@@ -6,9 +6,6 @@ import pandas as pd
 import numpy as np
 from numba import jit
 
-# ----------------------------
-# Data Generation & Preprocessing
-# ----------------------------
 
 def generate_data():
     """
@@ -20,7 +17,6 @@ def generate_data():
     data_frames = []
 
     for stock in stocks:
-        # Simulate price and dividend data with a slight trend and some noise
         price = np.linspace(100, 150, len(dates)) + np.random.randn(len(dates)) * 5
         dividend = np.linspace(2, 3, len(dates)) + np.random.randn(len(dates)) * 0.2
         df = pd.DataFrame({
@@ -33,12 +29,8 @@ def generate_data():
 
     return pd.concat(data_frames, ignore_index=True)
 
-# Initial synthetic dataset
 df = generate_data()
 
-# ----------------------------
-# Computation with Numba Acceleration
-# ----------------------------
 
 @jit(nopython=True)
 def compute_growth(prices, dividends):
@@ -47,7 +39,7 @@ def compute_growth(prices, dividends):
     Uses numba for performance acceleration.
     """
     growth = np.empty(len(prices))
-    growth[0] = 0.0  # No growth for the first entry
+    growth[0] = 0.0  
     for i in range(1, len(prices)):
         if dividends[i-1] != 0:
             growth[i] = (dividends[i] - dividends[i-1]) / dividends[i-1]
@@ -67,12 +59,7 @@ def add_growth_rate(df):
         results.append(stock_df)
     return pd.concat(results, ignore_index=True)
 
-# Enhance our DataFrame with the growth rate calculation
 df = add_growth_rate(df)
-
-# ----------------------------
-# Building the Dash Dashboard
-# ----------------------------
 
 app = dash.Dash(__name__)
 
